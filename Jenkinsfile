@@ -46,8 +46,8 @@ spec:
 
           sh '''
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker build -t serglavr/hello:${BUILD_TAG} .
-            docker push serglavr/hello:${BUILD_TAG}
+            docker build -t serglavr/hello:${GIT_COMMIT} .
+            docker push serglavr/hello:${GIT_COMMIT}
           '''
 
           }
@@ -66,7 +66,7 @@ metadata:
 spec:
   containers:
     - name: application
-      image: serglavr/hello:${BUILD_TAG}
+      image: serglavr/hello:${GIT_COMMIT}
       ports:
       - name: http-port
         containerPort: 80
@@ -114,21 +114,20 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: hello-app
-
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         app: hello-app
-      spec:
-        containers:
-          - name: application
-            image: serglavr/hello:${BUILD_TAG}
-            imagePullPolicy: Always
-            ports:
-            - name: http-port
-              containerPort: 80
+    spec:
+      containers:
+        - name: application
+          image: serglavr/hello:${GIT_COMMIT}
+          imagePullPolicy: Always
+          ports:
+          - name: http-port
+            containerPort: 80
 
 ---
 
