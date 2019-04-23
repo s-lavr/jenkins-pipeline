@@ -110,20 +110,25 @@ spec:
         container('kubectl') {
           sh """
             cat <<EOF > test.yaml
-apiVersion: v1
-kind: Pod
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
   name: hello-app
-  labels:
-    app: hello-app
+
 spec:
-  containers:
-    - name: application
-      image: serglavr/hello:${BUILD_TAG}
-      imagePullPolicy: Always
-      ports:
-      - name: http-port
-        containerPort: 80
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-app
+      spec:
+        containers:
+          - name: application
+            image: serglavr/hello:${BUILD_TAG}
+            imagePullPolicy: Always
+            ports:
+            - name: http-port
+              containerPort: 80
 
 ---
 
