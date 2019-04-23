@@ -33,7 +33,7 @@ spec:
 ) {
     node ('dockerbuild') {
 
-      stage ('Build Dockerfile') {
+      stage ('Build Dockerfile and push image') {
         container('docker') {
           git url: 'https://github.com/s-lavr/jenkins-pipeline.git', branch: 'master'
           withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
@@ -75,7 +75,7 @@ spec:
 """
 ) {
     node ('deploytest') {
-      stage ('deploytest') {
+      stage ('Test application') {
         container('curl') {
         sh 'curl localhost:80'
         }
