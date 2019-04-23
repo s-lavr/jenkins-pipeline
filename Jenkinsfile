@@ -63,8 +63,6 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: deploytest
-  labels:
-    some-label: some-label-value
 spec:
   containers:
     - name: application
@@ -87,3 +85,83 @@ spec:
       }
     }
   }
+
+
+def label = "mypod-${UUID.randomUUID().toString()}"
+podTemplate(label: 'deploy', yaml: """
+apiVersion: v1
+kind: Pod
+metadata:
+labels:
+  component: ci
+spec:
+  serviceAccountName: cd-jenkins
+  containers:
+  - name: kubectl
+    image: lachlanevenson/k8s-kubectl
+    command:
+    - cat
+    tty: true
+    """
+) {
+    node ('deploy') {
+
+      stage ('Deploy app') {
+        container('kubectl') {
+          sh """
+            cat <<EOF > test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-app
+  labels:
+    app: hello-app
+spec:
+  containers:
+    - name: application
+      image: serglavr/hello
+      ports:
+      - name: http-port
+        containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-app
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: hello-app
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: application-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: application.serglavr.dnsabr.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hello-app
+          servicePort: 80
+
+EOF
+
+            kubectl apply -f test.yaml
+          """
+        }
+      }
+
+    }
+}
