@@ -116,10 +116,10 @@ metadata:
   labels:
     app: hello-app
 spec:
-  imagePullPolicy: Always
   containers:
     - name: application
       image: serglavr/hello
+      imagePullPolicy: Always
       ports:
       - name: http-port
         containerPort: 80
