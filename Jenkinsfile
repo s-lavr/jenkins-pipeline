@@ -87,7 +87,6 @@ spec:
   }
 
 
-def label = "mypod-${UUID.randomUUID().toString()}"
 podTemplate(label: 'deploy', yaml: """
 apiVersion: v1
 kind: Pod
