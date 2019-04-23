@@ -46,8 +46,8 @@ spec:
 
           sh '''
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker build -t serglavr/hello:${GIT_COMMIT} .
-            docker push serglavr/hello:${GIT_COMMIT}
+            docker build -t serglavr/hello:${BUILD_TAG} .
+            docker push serglavr/hello:${BUILD_TAG}
           '''
 
           }
@@ -66,7 +66,7 @@ metadata:
 spec:
   containers:
     - name: application
-      image: serglavr/hello:${GIT_COMMIT}
+      image: serglavr/hello:${BUILD_TAG}
       ports:
       - name: http-port
         containerPort: 80
@@ -123,7 +123,7 @@ spec:
     spec:
       containers:
         - name: application
-          image: serglavr/hello:${GIT_COMMIT}
+          image: serglavr/hello:${BUILD_TAG}
           imagePullPolicy: Always
           ports:
           - name: http-port
