@@ -116,6 +116,7 @@ metadata:
   labels:
     app: hello-app
 spec:
+  imagePullPolicy: Always
   containers:
     - name: application
       image: serglavr/hello
