@@ -41,6 +41,7 @@ spec:
 
 node ('buildtest') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
+    env.IMAGE_TAG='dummy'
     //sh 'printenv'
     /*stage('Set correct image tag') {
         if (env.GIT_BRANCH == 'master') {
@@ -55,7 +56,7 @@ node ('buildtest') {
     }*/
     stage ('Build Dockerfile and push image') {
         container('docker') {
-            env.IMAGE_TAG='dummy'
+
             sh '''
             docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
