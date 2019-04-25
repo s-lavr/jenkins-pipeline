@@ -58,7 +58,7 @@ node ('buildtest') {
         container('docker') {
 
             sh '''
-            docker build -t serglavr/hello:${env.IMAGE_TAG} .
+            # docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
             # docker run -d --name=hello --net=hello serglavr/hello:latest
             docker run -it --net=hello appropriate/curl /usr/bin/curl hello:80
