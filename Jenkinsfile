@@ -58,7 +58,7 @@ node ('buildtest') {
     }
     stage ('Build Dockerfile and push image') {
         container('docker') {
-
+            sh 'printenv'
             sh """
             docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
@@ -69,10 +69,10 @@ node ('buildtest') {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
                                 usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD']]) {
 
-                    sh '''
+                    sh """
                     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
                     docker push serglavr/hello:${env.IMAGE_TAG}
-                    '''
+                    """
 
                 }
             }
