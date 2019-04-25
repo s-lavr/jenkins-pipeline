@@ -45,13 +45,16 @@ node ('buildtest') {
     stage('Set correct image tag') {
         if (env.GIT_BRANCH == 'master') {
             env.IMAGE_TAG=${env.GIT_BRANCH}-${env.GIT_COMMIT}
-        } else if (env.TAG_NAME) {
+        /*}
+        else if (env.TAG_NAME) {
             env.IMAGE_TAG=${env.TAG_NAME}
-        } else if (env.CHANGE_ID) {
-            env.IMAGE_TAG='pullrequest'
-        } else {
-            env.IMAGE_TAG=${env.GIT_BRANCH}
         }
+        else if (env.CHANGE_ID) {
+            env.IMAGE_TAG='pullrequest'
+        }
+        else {
+            env.IMAGE_TAG=${env.GIT_BRANCH}
+        }*/
     }
     stage ('Build Dockerfile and push image') {
         container('docker') {
@@ -62,7 +65,7 @@ node ('buildtest') {
             docker run -d --name=hello --net=hello serglavr/hello:latest
             docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
             """
-            /*if (env.CHANGE_ID==null) {
+            if (env.CHANGE_ID==null) {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
                                 usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD']]) {
 
@@ -72,7 +75,7 @@ node ('buildtest') {
                     '''
 
                 }
-            }*/
+            }
         }
     }
 }
