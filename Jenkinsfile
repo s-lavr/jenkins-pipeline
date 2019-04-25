@@ -41,9 +41,8 @@ spec:
 
 node ('buildtest') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
-    env.IMAGE_TAG='dummy'
     //sh 'printenv'
-    /*stage('Set correct image tag') {
+    stage('Set correct image tag') {
         if (env.GIT_BRANCH == 'master') {
             env.IMAGE_TAG=${env.GIT_BRANCH}-${env.GIT_COMMIT}
         } else if (env.TAG_NAME) {
@@ -53,7 +52,7 @@ node ('buildtest') {
         } else {
             env.IMAGE_TAG=${env.GIT_BRANCH}
         }
-    }*/
+    }
     stage ('Build Dockerfile and push image') {
         container('docker') {
 
