@@ -63,7 +63,7 @@ node ('buildtest') {
             docker run -d --name=hello --net=hello serglavr/hello:latest
             docker run -it --net=hello appropriate/curl /usr/bin/curl hello:80
             '''
-            if (env.CHANGE_ID=null) {
+            if (env.CHANGE_ID==null) {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
                                 usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD']]) {
 
