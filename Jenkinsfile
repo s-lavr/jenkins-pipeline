@@ -41,7 +41,6 @@ spec:
 
 node ('buildtest') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
-    git url: 'https://github.com/s-lavr/jenkins-pipeline.git'
     //sh 'printenv'
     stage('Set correct image tag') {
         if (env.GIT_BRANCH == 'master') {
