@@ -46,7 +46,7 @@ node ('buildtest') {
         if (env.GIT_BRANCH == 'origin/master') {
             env.IMAGE_TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}"
         }
-        /*else if (env.TAG_NAME) {
+        else if (env.TAG_NAME) {
             env.IMAGE_TAG=${env.TAG_NAME}
         }
         else if (env.CHANGE_ID) {
@@ -54,7 +54,7 @@ node ('buildtest') {
         }
         else {
             env.IMAGE_TAG=${env.GIT_BRANCH}
-        }*/
+        }
     }
     stage ('Build Dockerfile and push image') {
         container('docker') {
