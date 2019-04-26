@@ -41,7 +41,6 @@ spec:
 
 node ('buildtest') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
-    //sh 'printenv'
     stage('Set correct image tag') {
         if (env.GIT_BRANCH == 'master') {
             env.IMAGE_TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}"
@@ -55,11 +54,10 @@ node ('buildtest') {
     }
     stage ('Build Dockerfile and push image') {
         container('docker') {
-            sh 'printenv'
             sh """
-            docker build -t serglavr/hello:`echo ${env.IMAGE_TAG} | cut -f2 -d"/"` .
+            docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
-            docker run -d --name=hello --net=hello serglavr/hello:latest
+            docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
             docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
             """
             if (env.CHANGE_ID == null) {
@@ -68,7 +66,7 @@ node ('buildtest') {
 
                     sh """
                     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-                    docker push serglavr/hello:`echo ${env.IMAGE_TAG} | cut -f2 -d"/"`
+                    docker push serglavr/hello:${env.IMAGE_TAG}
                     """
 
                 }
