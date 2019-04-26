@@ -60,7 +60,7 @@ node ('buildtest') {
         container('docker') {
             sh 'printenv'
             sh """
-            IMAGE_TAG=$(echo $IMAGE_TAG | tr -d "/")
+            #IMAGE_TAG=$(echo $IMAGE_TAG | tr -d "/")
             docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
             docker run -d --name=hello --net=hello serglavr/hello:latest
