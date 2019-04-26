@@ -43,17 +43,14 @@ node ('buildtest') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
     //sh 'printenv'
     stage('Set correct image tag') {
-        if (env.GIT_BRANCH == 'origin/master') {
+        if (env.GIT_BRANCH == 'master') {
             env.IMAGE_TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}"
         }
         else if (env.TAG_NAME) {
-            env.IMAGE_TAG=${env.TAG_NAME}
-        }
-        else if (env.CHANGE_ID) {
-            env.IMAGE_TAG='pullrequest'
+            env.IMAGE_TAG="${env.TAG_NAME}"
         }
         else {
-            env.IMAGE_TAG=${env.GIT_BRANCH}
+            env.IMAGE_TAG="${env.GIT_BRANCH}"
         }
     }
     stage ('Build Dockerfile and push image') {
