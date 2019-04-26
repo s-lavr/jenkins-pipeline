@@ -60,7 +60,7 @@ node ('buildtest') {
         container('docker') {
             sh 'printenv'
             sh """
-            docker build -t serglavr/hello:${env.IMAGE_TAG} .
+            docker build -t serglavr/hello:`${env.IMAGE_TAG} | tr -d "/"` .
             docker network create --driver=bridge hello
             docker run -d --name=hello --net=hello serglavr/hello:latest
             docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
@@ -71,7 +71,7 @@ node ('buildtest') {
 
                     sh """
                     docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-                    docker push serglavr/hello:${env.IMAGE_TAG}
+                    docker push serglavr/hello:`${env.IMAGE_TAG} | tr -d "/"`
                     """
 
                 }
