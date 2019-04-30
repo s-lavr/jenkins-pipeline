@@ -55,6 +55,7 @@ node ('buildtest') {
     stage ('Build Dockerfile and push image') {
         container('docker') {
             sh """
+            printenv
             docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
             docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
