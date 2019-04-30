@@ -56,11 +56,13 @@ node ('buildtest') {
         container('docker') {
             sh """
             printenv
-            cat /etc/hosts
             docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
             docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
+            docker run -i --net=hello appropriate/curl /bin/cat /etc/hosts
             docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
+
+
             """
             if (env.CHANGE_ID == null) {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
