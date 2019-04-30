@@ -56,6 +56,7 @@ node ('buildtest') {
         container('docker') {
             sh """
             printenv
+            cat /etc/hosts
             docker build -t serglavr/hello:${env.IMAGE_TAG} .
             docker network create --driver=bridge hello
             docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
