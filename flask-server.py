@@ -6,7 +6,7 @@ def hello():
     return "<h1>New message specially for branch</h1>"
 
 @app.route('/test')
-def hello():
+def test():
     return "<h1>Additional message (different path)</h1>"
 
 if __name__ == "__main__":
