@@ -83,14 +83,16 @@ spec:
       }
     }
 
-    stage ('Test helm') {
-      container('helm') {
-        sh """
-        helm version
-        helm init --client-only
-        helm install ./flask-server --set image.tag=${env.IMAGE_TAG}
-        helm list
-        """
+    stage ('Deploy helm chart') {
+      if (env.GIT_BRANCH == 'master') {
+        container('helm') {
+          sh """
+          helm version
+          helm init --client-only
+          helm install ./flask-server --set image.tag=${env.IMAGE_TAG}
+          helm list
+          """
+        }
       }
     }
   }
