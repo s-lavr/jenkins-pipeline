@@ -7,7 +7,14 @@ kind: Pod
 metadata:
   name: dockerbuild
 spec:
+  # Use service account that can deploy to all namespaces
+  serviceAccountName: cd-jenkins
   containers:
+    - name: helm
+      image: alpine/helm
+      command:
+      - cat
+      tty: true
     - name: curl
       image: appropriate/curl
       command:
@@ -39,40 +46,53 @@ spec:
 """
 ) {
 
-node ('buildtest') {
+  node ('buildtest') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
+
     stage('Set correct image tag') {
-        if (env.GIT_BRANCH == 'master') {
-            env.IMAGE_TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}"
-        }
-        else if (env.TAG_NAME) {
-            env.IMAGE_TAG="${env.TAG_NAME}"
-        }
-        else {
-            env.IMAGE_TAG="${env.GIT_BRANCH}"
-        }
+      if (env.GIT_BRANCH == 'master') {
+        env.IMAGE_TAG="${env.GIT_BRANCH}-${env.GIT_COMMIT}"
+      }
+      else if (env.TAG_NAME) {
+        env.IMAGE_TAG="${env.TAG_NAME}"
+      }
+      else {
+        env.IMAGE_TAG="${env.GIT_BRANCH}"
+      }
     }
+
     stage ('Build Dockerfile and push image') {
-        container('docker') {
+      container('docker') {
+        sh """
+        docker build -t serglavr/hello:${env.IMAGE_TAG} .
+        docker network create --driver=bridge hello
+        docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
+        docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
+        """
+        if (env.CHANGE_ID == null) {
+          withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
+                          usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD']]) {
+
             sh """
-            docker build -t serglavr/hello:${env.IMAGE_TAG} .
-            docker network create --driver=bridge hello
-            docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
-            docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            docker push serglavr/hello:${env.IMAGE_TAG}
             """
-            if (env.CHANGE_ID == null) {
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
-                                usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD']]) {
 
-                    sh """
-                    docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-                    docker push serglavr/hello:${env.IMAGE_TAG}
-                    """
-
-                }
-            }
+          }
         }
+      }
     }
-}
 
+    stage ('Test helm') {
+      container('helm') {
+        sh """
+        ls
+        helm version
+        helm init --client-only
+        helm install stable/mysql --debug --dry-run
+        helm list
+        """
+      }
+    }
+  }
 }
