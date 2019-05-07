@@ -86,10 +86,9 @@ spec:
     stage ('Test helm') {
       container('helm') {
         sh """
-        ls
         helm version
         helm init --client-only
-        helm install stable/mysql --debug --dry-run
+        helm install ./flask-server
         helm list
         """
       }
