@@ -1,0 +1,4 @@
+image:
+  repository: serglavr/hello
+  tag: latest
+  pullPolicy: IfNotPresent
