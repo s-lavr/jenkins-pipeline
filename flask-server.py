@@ -3,7 +3,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return "<h1>New message specially for branch</h1>"
+    return "<h1>Special message for Helm charted deploy</h1>"
 
 @app.route('/test')
 def test():
