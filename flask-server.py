@@ -3,7 +3,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return "<h1> New message to test correct deploying of new chart </h1>"
+    return "<h1> Test message #1 </h1>"
 
 @app.route('/test')
 def test():
