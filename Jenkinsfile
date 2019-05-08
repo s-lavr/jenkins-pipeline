@@ -89,7 +89,7 @@ spec:
           sh """
           helm version
           helm init --client-only
-          helm install ./flask-server --set image.tag=${env.IMAGE_TAG}
+          helm update ./flask-server --set image.tag=${env.IMAGE_TAG} --install
           helm list
           """
         }
