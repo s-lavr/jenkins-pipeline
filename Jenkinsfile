@@ -64,7 +64,7 @@ spec:
     stage ('Build Dockerfile and push image') {
       container('docker') {
         sh """
-        docker build -t serglavr/hello:${env.IMAGE_TAG} .
+        docker build --no-cache -t serglavr/hello:${env.IMAGE_TAG} .
         docker network create --driver=bridge hello
         docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
         docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
