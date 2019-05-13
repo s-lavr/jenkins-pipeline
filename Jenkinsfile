@@ -84,7 +84,7 @@ spec:
     }
 
     stage ('Deploy helm chart') {
-      if (env.GIT_BRANCH == 'master') {
+      if (env.GIT_BRANCH == 'master' || env.TAG_NAME) {
         container('helm') {
           sh """
           helm version
