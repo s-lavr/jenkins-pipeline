@@ -1,6 +1,5 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
 
-
 podTemplate(label: 'builddeploy', yaml: """
 apiVersion: v1
 kind: Pod
