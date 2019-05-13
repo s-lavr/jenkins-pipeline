@@ -40,8 +40,7 @@ spec:
 ) {
 
   node ('builddeploy') {
-    checkout(scm).each { k,v -> env.setProperty(k, v) }
-
+    checkout scm
     stage('Set correct image tag') {
       if (env.GIT_BRANCH == 'master') {
         env.IMAGE_TAG="${env.GIT_COMMIT}"
