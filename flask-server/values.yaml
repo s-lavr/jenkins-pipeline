@@ -21,7 +21,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: application.serglavr.dnsabr.com
+    - host: app.serglavr.dnsabr.com
       paths:
         path: /
 
