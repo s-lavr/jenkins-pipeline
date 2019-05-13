@@ -10,7 +10,7 @@ spec:
   serviceAccountName: jenkins
   containers:
     - name: helm
-      image: alpine/helm
+      image: alpine/helm:2.13.1
       command:
       - cat
       tty: true
