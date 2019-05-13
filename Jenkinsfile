@@ -1,22 +1,17 @@
 def label = "mypod-${UUID.randomUUID().toString()}"
 
 
-podTemplate(label: 'buildtest', yaml: """
+podTemplate(label: 'builddeploy', yaml: """
 apiVersion: v1
 kind: Pod
 metadata:
-  name: dockerbuild
+  name: builddeploy
 spec:
   # Use service account that can deploy to all namespaces
-  serviceAccountName: cd-jenkins
+  serviceAccountName: jenkins
   containers:
     - name: helm
       image: alpine/helm
-      command:
-      - cat
-      tty: true
-    - name: curl
-      image: appropriate/curl
       command:
       - cat
       tty: true
@@ -25,7 +20,6 @@ spec:
       command:
       - cat
       tty: true
-      # imagePullPolicy: Always
       env:
       - name: POD_IP
         valueFrom:
@@ -46,7 +40,7 @@ spec:
 """
 ) {
 
-  node ('buildtest') {
+  node ('builddeploy') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
 
     stage('Set correct image tag') {
