@@ -78,12 +78,14 @@ spec:
     stage ('Deploy helm chart') {
       if (env.GIT_BRANCH == 'master' || env.TAG_NAME) {
         container('helm') {
-          sh """
-          helm version
-          helm init --client-only
-          helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install
-          helm list
-          """
+          withCredentials([file(credentialsId: 'kubesecret', variable: 'SECRET'), file(credentialsId: 'kube', variable: 'KUBE')]) {
+              sh """
+              cp $KUBE ./kubeconfig
+              cp $SECRET ./ca-mil01-secondcluster.pem
+              helm init --client-only
+              helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --kubeconfig ./kubeconfig
+              """
+          }
         }
       }
     }
