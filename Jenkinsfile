@@ -41,6 +41,7 @@ spec:
 
   node ('builddeploy') {
     checkout(scm).each { k,v -> env.setProperty(k, v) }
+
     stage('Set correct image tag') {
       if (env.GIT_BRANCH == 'master') {
         env.IMAGE_TAG="${env.GIT_COMMIT}"
@@ -53,14 +54,26 @@ spec:
       }
     }
 
-    stage ('Build Dockerfile and push image') {
+    stage ('Build application Dockerfile') {
       container('docker') {
         sh """
         docker build --no-cache -t serglavr/hello:${env.IMAGE_TAG} .
+        """
+      }
+    }
+
+    stage ('Test application') {
+      container('docker') {
+        sh """
         docker network create --driver=bridge hello
         docker run -d --name=hello --net=hello serglavr/hello:${env.IMAGE_TAG}
         docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
         """
+      }
+    }
+
+    stage ('Push application') {
+      container('docker') {
         if (env.CHANGE_ID == null) {
           withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'f74f60fe-bc38-4b3e-ab91-d7af3416231e',
                           usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD']]) {
@@ -69,7 +82,6 @@ spec:
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker push serglavr/hello:${env.IMAGE_TAG}
             """
-
           }
         }
       }
