@@ -15,6 +15,13 @@ service:
   type: ClusterIP
   port: 80
 
+hpa:
+  enabled: true
+  maxReplicas: 3
+  cpu:
+  memory:
+  requests:
+
 ingress:
   enabled: true
   annotations: {}
