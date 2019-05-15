@@ -18,7 +18,7 @@ service:
 hpa:
   enabled: true
   maxReplicas: 3
-  cpu:
+  cpu: 30
   memory:
   requests:
 
