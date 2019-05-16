@@ -5,7 +5,8 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     image_tag = os.environ.get('FLASKVERSION')
-    return render_template('index.html', image_tag=image_tag)
+    host = os.environ.get('HOSTNAME')
+    return render_template('index.html', image_tag=image_tag, host=host)
 
 @app.route('/test')
 def test():
