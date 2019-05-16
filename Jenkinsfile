@@ -68,6 +68,12 @@ spec:
         docker network create --driver=bridge hello
         docker run -d --name=hello -e FLASKVERSION="${env.IMAGE_TAG}" --net=hello serglavr/hello:${env.IMAGE_TAG}
         docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
+
+        if [[ $? -eq "0" ]]; then
+          echo "Version is correct"
+        else
+          echo "Version is not correct"
+        fi
         """
       }
     }
