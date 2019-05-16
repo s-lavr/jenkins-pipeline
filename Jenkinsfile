@@ -67,14 +67,14 @@ spec:
         sh """
         docker network create --driver=bridge hello
         docker run -d --name=hello -e FLASKVERSION="${env.IMAGE_TAG}" --net=hello serglavr/hello:${env.IMAGE_TAG}
-        docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80
-
-        if [[ $? -eq "0" ]]; then
-          echo "Version is correct"
-        else
-          echo "Version is not correct"
-        fi
         """
+        def result = sh(script: 'docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80', returnStdout: true)
+        if (result.contains("${env.IMAGE_TAG}")) {
+          echo "Test completed successfully"
+        }
+        else {
+          echo "Test is not completed"
+        }
       }
     }
 
