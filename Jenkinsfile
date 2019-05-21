@@ -61,7 +61,7 @@ spec:
           echo "Build is successful"
         }
         else {
-          echo "Build is not successful"
+          echo "Build is not successful, exit code: $build_result"
         }
       }
     }
@@ -98,7 +98,7 @@ spec:
             echo "Push is successful"
           }
           else {
-            echo "Push is not successful"
+            echo "Push is not successful, exit code: $push_result"
           }
         }
       }
@@ -119,7 +119,7 @@ spec:
             echo "Deploy is successful"
           }
           else {
-            echo "Deploy is not successful"
+            echo "Deploy is not successful, exit code: $deploy_result"
           }
 
         }
