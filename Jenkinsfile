@@ -58,7 +58,7 @@ spec:
       container('docker') {
         def build_result = sh(script: "docker build --no-cache -t serglavr/hello:${env.IMAGE_TAG} .", returnStatus: true)
         if (build_result == 0) {
-          echo "Build successful"
+          echo "Build is successful"
         }
         else {
           echo "Build is not successful"
@@ -95,7 +95,7 @@ spec:
 
           def push_result = sh(script: "docker push serglavr/hello:${env.IMAGE_TAG}", returnStatus: true)
           if (push_result == 0) {
-            echo "Push successful"
+            echo "Push is successful"
           }
           else {
             echo "Push is not successful"
@@ -111,10 +111,17 @@ spec:
               sh """
               cp $KUBE ./kubeconfig
               cp $SECRET ./ca-mil01-secondcluster.pem
-              helm init --client-only
-              helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --kubeconfig ./kubeconfig
               """
           }
+          sh "helm init --client-only"
+          def deploy_result = sh (script: "helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --kubeconfig ./kubeconfig", returnStatus: true)
+          if (deploy_result == 0) {
+            echo "Deploy is successful"
+          }
+          else {
+            echo "Deploy is not successful"
+          }
+
         }
       }
     }
