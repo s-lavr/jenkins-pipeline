@@ -90,8 +90,15 @@ spec:
 
             sh """
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker push serglavr/hello:${env.IMAGE_TAG}
             """
+          }
+
+          def push_result = sh(script: "docker push serglavr/hello:${env.IMAGE_TAG}", returnStatus: true)
+          if (push_result == 0) {
+            echo "Push successful"
+          }
+          else {
+            echo "Push is not successful"
           }
         }
       }
