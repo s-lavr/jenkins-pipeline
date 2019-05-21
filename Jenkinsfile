@@ -56,9 +56,13 @@ spec:
 
     stage ('Build application Dockerfile') {
       container('docker') {
-        sh """
-        docker build --no-cache -t serglavr/hello:${env.IMAGE_TAG} .
-        """
+        def build_result = sh(script: "docker build --no-cache -t serglavr/hello:${env.IMAGE_TAG} .", returnStatus: true)
+        if (build_result == 0) {
+          echo "Build successful"
+        }
+        else {
+          echo "Build is not successful"
+        }
       }
     }
 
