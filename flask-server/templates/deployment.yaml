@@ -24,6 +24,7 @@ spec:
         app.kubernetes.io/name: {{ include "flask-server.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      minReadySeconds: 5
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
