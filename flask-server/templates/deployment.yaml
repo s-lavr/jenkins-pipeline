@@ -37,12 +37,18 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /test
               port: http
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+              periodSeconds: 15
           readinessProbe:
             httpGet:
-              path: /
+              path: /test
               port: http
+              initialDelaySeconds: 5
+              timeoutSeconds: 1
+              periodSeconds: 15
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
