@@ -9,7 +9,7 @@ replicaCount: 1
 deploystrategy:
   type: RollingUpdate
   maxSurge: 1
-  maxUnavailable: 25%
+  maxUnavailable: 0
 
 image:
   repository: serglavr/hello
