@@ -7,9 +7,9 @@ replicaCount: 1
 
 
 deploystrategy:
-  type: Recreate
-  # maxSurge: 0
-  # maxUnavailable: 0
+  type: RollingUpdate
+  maxSurge: 2
+  maxUnavailable: 0
 
 image:
   repository: serglavr/hello

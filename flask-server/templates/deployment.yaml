@@ -14,10 +14,10 @@ spec:
       app.kubernetes.io/name: {{ include "flask-server.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   strategy:
-    type: RollingUpdate
+    type: {{ .Values.deploystrategy.type }}
     rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 0
+      maxSurge: {{ .Values.deploystrategy.maxSurge }}
+      maxUnavailable: {{ .Values.deploystrategy.maxUnavailable }}
   template:
     metadata:
       labels:
