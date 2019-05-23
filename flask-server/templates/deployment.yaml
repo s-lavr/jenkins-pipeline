@@ -13,11 +13,11 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "flask-server.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-  # strategy:
-  #   rollingUpdate:
-  #     maxSurge: {{ .Values.deploystrategy.maxSurge }}
-  #     maxUnavailable: {{ .Values.deploystrategy.maxUnavailable }}
-  #   type: {{ .Values.deploystrategy.type }}
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.deploystrategy.maxSurge }}
+      maxUnavailable: {{ .Values.deploystrategy.maxUnavailable }}
+    type: {{ .Values.deploystrategy.type }}
   template:
     metadata:
       labels:
