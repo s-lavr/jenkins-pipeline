@@ -30,7 +30,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
           - name: FLASKVERSION
-            value: {{ .Values.image.tag }}
+            value: {{ .Values.image.tag | quote }}
           ports:
             - name: http
               containerPort: 80
