@@ -121,7 +121,7 @@ spec:
 
         // Test if deploy is successful
 
-          def deploy_result = sh (script: "helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --kubeconfig ./kubeconfig", returnStatus: true)
+          def deploy_result = sh (script: "helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --wait --kubeconfig ./kubeconfig", returnStatus: true)
           if (deploy_result == 0) {
             echo "Deploy is successful"
           }
