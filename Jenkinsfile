@@ -40,6 +40,7 @@ spec:
 ) {
 
   node ('builddeploy') {
+
     checkout(scm).each { k,v -> env.setProperty(k, v) }
 
     stage('Set correct image tag') {
@@ -61,7 +62,7 @@ spec:
           echo "Build is successful"
         }
         else {
-          echo "Build is not successful, exit code: $build_result"
+          error("Build is not successful, exit code: $build_result")
         }
       }
     }
@@ -72,13 +73,12 @@ spec:
         docker network create --driver=bridge hello
         docker run -d --name=hello -e FLASKVERSION="${env.IMAGE_TAG}" --net=hello serglavr/hello:${env.IMAGE_TAG}
         """
-        def result = sh(script: 'docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80', returnStdout: true)
-        if (result.contains("${env.IMAGE_TAG}")) {
-          echo "Test completed successfully"
-        }
-        else {
-          echo "Test is not completed"
-        }
+
+        def tests = [:]
+        tests["test_1"] = {test_curl_status()}
+        tests["test_2"] = {test_curl_out()}
+
+        parallel tests
       }
     }
 
@@ -98,7 +98,7 @@ spec:
             echo "Push is successful"
           }
           else {
-            echo "Push is not successful, exit code: $push_result"
+            error("Push is not successful, exit code: $push_result")
           }
         }
       }
@@ -107,22 +107,51 @@ spec:
     stage ('Deploy helm chart') {
       if (env.GIT_BRANCH == 'master' || env.TAG_NAME) {
         container('helm') {
-          withCredentials([file(credentialsId: 'kubesecret', variable: 'SECRET'), file(credentialsId: 'kube', variable: 'KUBE')]) {
+
+        // Copy credentials to helm container
+
+          withCredentials([file(credentialsId: '60e080ad-f1b7-4e35-b4bb-077fc0124046', variable: 'KUBE')]) {
               sh """
               cp $KUBE ./kubeconfig
-              cp $SECRET ./ca-mil01-secondcluster.pem
               """
           }
-          def deploy_result = sh (script: "helm init --client-only && helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --kubeconfig ./kubeconfig", returnStatus: true)
+
+          sh "helm init --client-only"
+
+        // Test if deploy is successful
+
+          def deploy_result = sh (script: "helm upgrade test-release ./flask-server --set image.tag=${env.IMAGE_TAG} --install --wait --kubeconfig ./kubeconfig", returnStatus: true)
           if (deploy_result == 0) {
             echo "Deploy is successful"
           }
           else {
-            echo "Deploy is not successful, exit code: $deploy_result"
+            error("Deploy is not successful, exit code: $deploy_result")
           }
-
         }
       }
     }
   }
+}
+
+
+// Functions
+
+def test_curl_status() {
+    def result = sh(script: 'docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80', returnStatus: true)
+        if (result == 0) {
+          echo "Test completed successfully"
+        }
+        else {
+          error("Test is not completed, error message: $result ")
+        }
+}
+
+def test_curl_out() {
+    def result = sh(script: 'docker run -i --net=hello appropriate/curl /usr/bin/curl hello:80', returnStdout: true)
+        if (result.contains("${env.IMAGE_TAG}")) {
+          echo "Test completed successfully"
+        }
+        else {
+          error("Test is not completed")
+        }
 }
