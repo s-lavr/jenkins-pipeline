@@ -110,10 +110,9 @@ spec:
 
         // Copy credentials to helm container
 
-          withCredentials([file(credentialsId: 'kubesecret', variable: 'SECRET'), file(credentialsId: 'kube', variable: 'KUBE')]) {
+          withCredentials([file(credentialsId: '60e080ad-f1b7-4e35-b4bb-077fc0124046', variable: 'KUBE')]) {
               sh """
               cp $KUBE ./kubeconfig
-              cp $SECRET ./ca-mil01-secondcluster.pem
               """
           }
 
